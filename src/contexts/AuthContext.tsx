@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import type { User, AuthError } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -32,8 +32,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: window.location.origin + '/auth'
+      }
     });
-    if (error) throw error;
+    
+    if (error) {
+      const authError = error as AuthError;
+      throw new Error(authError.message);
+    }
   };
 
   const signIn = async (email: string, password: string) => {
@@ -41,12 +48,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
     });
-    if (error) throw error;
+    
+    if (error) {
+      const authError = error as AuthError;
+      if (authError.message.includes('email_not_confirmed')) {
+        throw new Error('Please check your email and confirm your account before signing in.');
+      }
+      throw new Error(authError.message);
+    }
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) {
+      const authError = error as AuthError;
+      throw new Error(authError.message);
+    }
   };
 
   return (
