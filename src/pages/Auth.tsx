@@ -13,12 +13,14 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showConfirmationAlert, setShowConfirmationAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setShowConfirmationAlert(false);
     
     try {
@@ -29,6 +31,7 @@ export default function Auth() {
           title: "Account created",
           description: "Please check your email to verify your account before signing in.",
         });
+        setIsSignUp(false); // Switch to sign in view after successful signup
       } else {
         await signIn(email, password);
         navigate('/');
@@ -50,6 +53,8 @@ export default function Auth() {
           description: errorMessage,
         });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,7 +66,7 @@ export default function Auth() {
         </CardHeader>
         <CardContent>
           {showConfirmationAlert && (
-            <Alert className="mb-4">
+            <Alert className="mb-4" variant="warning">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 Please check your email and confirm your account before signing in.
@@ -77,6 +82,7 @@ export default function Auth() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -87,10 +93,15 @@ export default function Auth() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full">
-              {isSignUp ? 'Sign Up' : 'Sign In'}
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Button>
           </form>
           <Button
@@ -100,6 +111,7 @@ export default function Auth() {
               setIsSignUp(!isSignUp);
               setShowConfirmationAlert(false);
             }}
+            disabled={isLoading}
           >
             {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
           </Button>
