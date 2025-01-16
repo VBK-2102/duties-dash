@@ -31,7 +31,7 @@ export default function Auth() {
           title: "Account created",
           description: "Please check your email to verify your account before signing in.",
         });
-        setIsSignUp(false); // Switch to sign in view after successful signup
+        setIsSignUp(false);
       } else {
         await signIn(email, password);
         navigate('/');
@@ -66,7 +66,7 @@ export default function Auth() {
         </CardHeader>
         <CardContent>
           {showConfirmationAlert && (
-            <Alert className="mb-4" variant="warning">
+            <Alert className="mb-4" variant="default">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 Please check your email and confirm your account before signing in.
