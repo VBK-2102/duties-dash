@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -55,13 +56,14 @@ export function NewTaskDialog() {
       title: "",
       description: "",
       priority: "low",
+      due_date: undefined,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await tasksService.createTask({
-        title: values.title, // Ensure title is always included
+        title: values.title,
         description: values.description || "",
         priority: values.priority,
         status: "pending",
@@ -94,6 +96,9 @@ export function NewTaskDialog() {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
+          <DialogDescription>
+            Add a new task to your list. Fill in the details below.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
