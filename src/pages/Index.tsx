@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tasksService } from "@/lib/tasks";
 import { NewTaskDialog } from "@/components/NewTaskDialog";
+import { cn } from "@/lib/utils"; // Add this import
 
 const Dashboard = () => {
   const { data: tasks = [], isLoading } = useQuery({

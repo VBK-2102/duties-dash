@@ -61,9 +61,11 @@ export function NewTaskDialog() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await tasksService.createTask({
-        ...values,
+        title: values.title, // Ensure title is always included
+        description: values.description || "",
+        priority: values.priority,
         status: "pending",
-        due_date: values.due_date?.toISOString(),
+        due_date: values.due_date?.toISOString() || null,
       });
       
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
